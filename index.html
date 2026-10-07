@@ -3,25 +3,37 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Retro Player — Dvorets Muz</title>
+<title>Dvorets Muz — Retro Player</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
   :root {
-    --bg-dark: #000000;
-    --bg-lit: #0a0a14;
-    --accent: #7aa2ff;
+    --ios-blue: #007aff;
+    --ios-label: #000000;
+    --ios-label-secondary: rgba(60, 60, 67, 0.6);
+    --ios-label-tertiary: rgba(60, 60, 67, 0.3);
+    --ios-separator: rgba(60, 60, 67, 0.29);
+    --ease-ios: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   html, body {
-    background: var(--bg-dark);
+    background: #000;
     color: #fff;
-    font-family: 'SF Pro Display', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
     overflow-x: hidden;
     min-height: 100vh;
-    transition: background 2.5s ease;
+    transition: background 2s var(--ease-ios);
   }
 
+  /* ================= AMBIENT LIGHT ================= */
   #room-light {
     position: fixed;
     inset: 0;
@@ -29,15 +41,15 @@
     pointer-events: none;
     background: radial-gradient(
       circle at 50% 45%,
-      rgba(122,162,255,0.30) 0%,
-      rgba(122,162,255,0.10) 25%,
-      rgba(122,162,255,0.02) 50%,
-      rgba(0,0,0,0) 70%
+      rgba(122, 162, 255, 0.28) 0%,
+      rgba(122, 162, 255, 0.08) 30%,
+      rgba(0, 0, 0, 0) 65%
     );
     opacity: 0;
-    transition: opacity 2.5s ease;
+    transition: opacity 2s var(--ease-ios);
   }
 
+  /* ================= STAGE ================= */
   #stage {
     position: fixed;
     inset: 0;
@@ -49,62 +61,107 @@
     perspective: 1400px;
   }
 
+  /* ================= PLAYER ================= */
   .player {
     position: relative;
+    z-index: 20; /* above the jack — tip slides BEHIND the body */
     width: 340px;
     height: 620px;
     border-radius: 44px;
-    background: linear-gradient(145deg, #2e2e38, #16161c);
+    background: linear-gradient(160deg, #2b2b33 0%, #1a1a20 40%, #121218 100%);
     box-shadow:
-      inset 0 1px 1px rgba(255,255,255,0.12),
-      inset 0 -2px 6px rgba(0,0,0,0.6),
-      0 40px 80px rgba(0,0,0,0.7),
-      0 0 0 1px rgba(255,255,255,0.08);
+      inset 0 1px 1px rgba(255, 255, 255, 0.14),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.7),
+      0 50px 100px rgba(0, 0, 0, 0.75),
+      0 20px 40px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.06);
     transform: scale(0.85) rotateX(15deg) translateY(40px);
     transform-style: preserve-3d;
-    transition: box-shadow 2s ease;
+    transition: box-shadow 2s var(--ease-ios);
     pointer-events: auto;
     padding: 22px;
     will-change: transform;
   }
 
+  .jack-port {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 8px;
+    border-radius: 0 0 3px 3px;
+    background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+    box-shadow:
+      inset 0 -1px 2px rgba(0, 0, 0, 1),
+      inset 0 1px 1px rgba(255, 255, 255, 0.04),
+      0 0 0 1px rgba(255, 255, 255, 0.08);
+    z-index: 5;
+  }
+
+  /* ================= SCREEN ================= */
   .screen {
     position: relative;
     width: 100%;
     height: 55%;
-    border-radius: 22px;
+    border-radius: 20px;
     background: #05050a;
     overflow: hidden;
     box-shadow:
-      inset 0 0 40px rgba(0,0,0,0.95),
-      inset 0 0 0 1px rgba(255,255,255,0.03);
+      inset 0 0 30px rgba(0, 0, 0, 0.9),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.04);
     transition:
-      background 2.5s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 2.5s cubic-bezier(0.4, 0, 0.2, 1),
-      filter 0.4s ease;
+      background 2s var(--ease-ios),
+      box-shadow 2s var(--ease-ios),
+      filter 0.4s var(--ease-ios);
   }
   .screen.on {
-    background: linear-gradient(160deg, #dbe7ff 0%, #b6ccff 100%);
+    background: linear-gradient(160deg, #e8efff 0%, #c3d5ff 100%);
     box-shadow:
-      inset 0 0 30px rgba(122,162,255,0.5),
-      0 0 40px rgba(122,162,255,0.45),
-      0 0 0 1px rgba(255,255,255,0.15);
+      inset 0 0 25px rgba(122, 162, 255, 0.45),
+      0 0 35px rgba(122, 162, 255, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.12);
   }
-  .screen.switching { filter: brightness(0.25) blur(1.5px); }
+  .screen.switching {
+    filter: brightness(0.3) blur(1px);
+  }
 
   .screen::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(transparent 50%, rgba(255,255,255,0.04) 50%);
+    background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.03) 50%);
     background-size: 100% 3px;
     opacity: 0;
     pointer-events: none;
     z-index: 5;
-    transition: opacity 2.5s ease;
+    transition: opacity 2s var(--ease-ios);
   }
-  .screen.on::after { opacity: 0.5; }
+  .screen.on::after { opacity: 0.6; }
 
+  /* Soft specular highlight on glass */
+  .screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 8%;
+    right: 8%;
+    height: 28%;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0.06) 40%,
+      transparent 100%
+    );
+    border-radius: 20px 20px 40% 40%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 6;
+    transition: opacity 1.5s var(--ease-ios);
+  }
+  .screen.on::before { opacity: 1; }
+
+  /* ================ SCROLL DOWN ================ */
   #scroll-layer {
     position: absolute;
     inset: 0;
@@ -112,48 +169,53 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     z-index: 2;
-    transition: opacity 1.2s ease;
+    transition: opacity 1s var(--ease-ios);
     padding: 20px;
     text-align: center;
     pointer-events: none;
   }
   .scroll-title {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 500;
-    letter-spacing: 4px;
+    letter-spacing: 5px;
     text-transform: uppercase;
     color: #e8e8f5;
-    text-shadow: 0 0 10px rgba(220,225,255,0.4), 0 0 30px rgba(150,180,255,0.3);
-    animation: standbyGlow 3s ease-in-out infinite;
+    text-shadow:
+      0 0 12px rgba(220, 225, 255, 0.45),
+      0 0 30px rgba(150, 180, 255, 0.3);
+    animation: standbyGlow 3.2s ease-in-out infinite;
   }
   @keyframes standbyGlow {
-    0%,100% { opacity: 0.65; }
-    50%     { opacity: 1; }
+    0%, 100% { opacity: 0.65; }
+    50%      { opacity: 1; }
   }
   .scroll-sub {
-    font-size: 10px;
-    letter-spacing: 3px;
+    font-size: 9px;
+    letter-spacing: 4px;
     text-transform: uppercase;
-    color: rgba(200,210,255,0.4);
-    animation: standbyGlow 3s ease-in-out infinite;
-    animation-delay: 0.3s;
+    color: rgba(200, 210, 255, 0.42);
+    font-weight: 500;
+    animation: standbyGlow 3.2s ease-in-out infinite;
+    animation-delay: 0.35s;
   }
   .scroll-arrow {
-    margin-top: 12px;
-    width: 12px; height: 12px;
-    border-right: 1.5px solid rgba(200,210,255,0.7);
-    border-bottom: 1.5px solid rgba(200,210,255,0.7);
+    margin-top: 8px;
+    width: 10px;
+    height: 10px;
+    border-right: 1.5px solid rgba(200, 210, 255, 0.7);
+    border-bottom: 1.5px solid rgba(200, 210, 255, 0.7);
     transform: rotate(45deg);
-    animation: arrowBounce 2.4s ease-in-out infinite;
-    filter: drop-shadow(0 0 6px rgba(150,180,255,0.6));
+    animation: arrowBounce 2.2s var(--ease-ios) infinite;
+    filter: drop-shadow(0 0 5px rgba(150, 180, 255, 0.6));
   }
   @keyframes arrowBounce {
-    0%,100% { transform: rotate(45deg) translate(0,0); opacity: 0.4; }
-    50%     { transform: rotate(45deg) translate(5px,5px); opacity: 1; }
+    0%, 100% { transform: rotate(45deg) translate(0, 0); opacity: 0.45; }
+    50%      { transform: rotate(45deg) translate(4px, 4px); opacity: 1; }
   }
 
+  /* ================ BOOT ================ */
   #boot-layer {
     position: absolute;
     inset: 0;
@@ -161,28 +223,28 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 18px;
+    gap: 20px;
     z-index: 3;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 1.2s ease, visibility 1.2s ease;
+    transition: opacity 0.9s var(--ease-ios), visibility 0.9s var(--ease-ios);
     pointer-events: none;
   }
-  .apple-small {
-    width: 40px;
-    height: 48px;
+  .apple-logo {
+    width: 38px;
+    height: 46px;
     display: block;
-    animation: appleFade 1.6s ease-in-out infinite alternate;
+    animation: appleFade 1.8s ease-in-out infinite alternate;
   }
-  .apple-small svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .apple-logo svg { width: 100%; height: 100%; display: block; }
   @keyframes appleFade {
-    from { opacity: 0.75; }
+    from { opacity: 0.72; }
     to   { opacity: 1; }
   }
   .boot-bar {
-    width: 130px;
+    width: 120px;
     height: 3px;
-    background: rgba(10,10,26,0.15);
+    background: rgba(10, 10, 26, 0.12);
     border-radius: 3px;
     overflow: hidden;
   }
@@ -192,40 +254,276 @@
     height: 100%;
     background: #0a0a1a;
     border-radius: 3px;
-    transition: width 0.3s ease-out;
+    transition: width 0.25s linear;
   }
 
-  #playlist-layer {
+  /* ================ iOS HOME ================ */
+  #home-layer {
     position: absolute;
     inset: 0;
     z-index: 4;
-    display: flex;
-    flex-direction: column;
-    padding: 18px 16px;
-    color: #0a0a1a;
+    padding: 12px 10px 18px;
+    color: var(--ios-label);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 1.4s ease, visibility 1.4s ease;
-    pointer-events: auto;
+    transition: opacity 0.9s var(--ease-ios), visibility 0.9s var(--ease-ios);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
   }
 
-  .screen-header {
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    opacity: 0.55;
-    border-bottom: 1px solid rgba(0,0,0,0.15);
-    padding-bottom: 6px;
+  .home-status {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: -0.1px;
+    padding: 0 6px 6px;
+    color: #0a0a1a;
   }
-  .screen-title { font-size: 18px; font-weight: 600; margin: 10px 0 2px; }
-  .screen-sub { font-size: 10px; opacity: 0.5; margin-bottom: 10px; }
+  .home-status .time {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .home-status .icons {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .home-status .icons svg {
+    width: 12px;
+    height: 9px;
+    fill: #0a0a1a;
+  }
+
+  .home-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 12px;
+    margin-top: 8px;
+    padding: 0 6px;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    pointer-events: none;
+  }
+  .app-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 3px 8px rgba(0, 0, 0, 0.18),
+      inset 0 0 0 0.5px rgba(255, 255, 255, 0.25);
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+  }
+  .app-icon svg { width: 26px; height: 26px; fill: currentColor; }
+  .app-name {
+    font-size: 9px;
+    font-weight: 500;
+    color: #0a0a1a;
+    letter-spacing: -0.1px;
+  }
+
+  .app-music .app-icon { background: linear-gradient(180deg, #ff5d8f 0%, #fa3b65 100%); }
+  .app-photos .app-icon {
+    background: conic-gradient(from 200deg at 50% 50%,
+      #ff3b30, #ff9500, #ffcc00, #34c759, #00c7be, #007aff, #5856d6, #af52de, #ff2d55, #ff3b30);
+  }
+  .app-phone .app-icon { background: linear-gradient(180deg, #34c759 0%, #248a3d 100%); }
+  .app-files .app-icon { background: linear-gradient(180deg, #5e5ce6 0%, #3634a3 100%); }
+  .app-games .app-icon { background: linear-gradient(180deg, #64d2ff 0%, #0a84ff 100%); }
+  .app-clock .app-icon { background: #1c1c1e; }
+
+  /* ================ VOLUME ANIMATION (iOS Style) ================ */
+  #volume-anim {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    background: rgba(219, 231, 255, 0);
+    transition:
+      opacity 0.45s var(--ease-ios),
+      visibility 0.45s var(--ease-ios),
+      background 0.45s var(--ease-ios);
+  }
+  #volume-anim.show {
+    opacity: 1;
+    visibility: visible;
+    background: rgba(219, 231, 255, 0.97);
+  }
+
+  /* Connection flash ring */
+  #volume-anim::before {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid rgba(122, 162, 255, 0);
+    transform: scale(0.4);
+    opacity: 0;
+    pointer-events: none;
+  }
+  #volume-anim.show::before {
+    animation: connectRing 0.7s var(--ease-ios) 0.05s forwards;
+  }
+  @keyframes connectRing {
+    0%   { transform: scale(0.3); opacity: 0.9; border-color: rgba(122, 162, 255, 0.7); }
+    100% { transform: scale(1.8); opacity: 0; border-color: rgba(122, 162, 255, 0); }
+  }
+
+  .volume-slider {
+    width: 42px;
+    height: 148px;
+    border-radius: 13px;
+    background: rgba(120, 120, 128, 0.22);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 6px 20px rgba(10, 10, 26, 0.08),
+      0 1px 3px rgba(10, 10, 26, 0.05),
+      inset 0 0 0 0.5px rgba(255, 255, 255, 0.5);
+    transform: scale(0.82) translateY(8px);
+    opacity: 0;
+    transition:
+      transform 0.6s var(--ease-bounce),
+      opacity 0.35s var(--ease-ios);
+  }
+  #volume-anim.show .volume-slider {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+
+  .vol-fill {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0%;
+    background: #ffffff;
+    transition: height 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 1;
+    box-shadow: 0 -1px 3px rgba(255, 255, 255, 0.5);
+  }
+  #volume-anim.show .vol-fill {
+    height: 68%;
+    transition-delay: 0.28s;
+  }
+
+  .vol-dots {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 3.5px;
+    z-index: 3;
+  }
+  .vol-dots span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(60, 60, 67, 0.75);
+    transition: background 0.3s;
+  }
+  #volume-anim.show .vol-dots span {
+    animation: dotPulse 0.5s ease 0.5s both;
+  }
+  #volume-anim.show .vol-dots span:nth-child(2) { animation-delay: 0.58s; }
+  #volume-anim.show .vol-dots span:nth-child(3) { animation-delay: 0.66s; }
+  @keyframes dotPulse {
+    0%   { transform: scale(1); background: rgba(60, 60, 67, 0.75); }
+    40%  { transform: scale(1.35); background: rgba(0, 122, 255, 0.85); }
+    100% { transform: scale(1); background: rgba(60, 60, 67, 0.75); }
+  }
+
+  .vol-note {
+    position: absolute;
+    bottom: 13px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    z-index: 3;
+  }
+  .vol-note svg { width: 100%; height: 100%; display: block; }
+  .vol-note svg path { fill: rgba(60, 60, 67, 0.85); transition: fill 0.3s; }
+  #volume-anim.show .vol-note svg path {
+    animation: noteGlow 0.6s ease 0.7s both;
+  }
+  @keyframes noteGlow {
+    0%, 100% { fill: rgba(60, 60, 67, 0.85); }
+    50%      { fill: rgba(0, 122, 255, 0.9); }
+  }
+  /* ================ PLAYLIST ================ */
+  #playlist-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 7;
+    display: flex;
+    flex-direction: column;
+    padding: 14px 14px 16px;
+    color: var(--ios-label);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.9s var(--ease-ios), visibility 0.9s var(--ease-ios);
+    pointer-events: none;
+  }
+
+  .now-playing-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ios-label-secondary);
+    padding-bottom: 6px;
+    border-bottom: 0.5px solid var(--ios-separator);
+    justify-content: space-between;
+  }
+  .music-header {
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
+  .music-title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    color: var(--ios-label);
+  }
+  .music-sub {
+    font-size: 10px;
+    color: var(--ios-label-secondary);
+    margin-top: 2px;
+    letter-spacing: -0.1px;
+  }
 
   #visualizer {
     width: 100%;
-    height: 40px;
-    margin-bottom: 8px;
+    height: 28px;
+    margin-bottom: 10px;
     display: block;
   }
 
@@ -235,6 +533,7 @@
     overflow-y: auto;
     scrollbar-width: none;
     padding-right: 2px;
+    margin-bottom: 6px;
   }
   .tracklist::-webkit-scrollbar { display: none; }
 
@@ -242,43 +541,52 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 7px 8px;
+    padding: 9px 8px;
     border-radius: 8px;
-    font-size: 11.5px;
+    font-size: 12px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.25s var(--ease-ios);
     position: relative;
     pointer-events: auto;
     user-select: none;
+    letter-spacing: -0.1px;
   }
-  .track:hover { background: rgba(10,10,30,0.08); }
-  .track.active { background: rgba(10,10,30,0.15); font-weight: 600; }
+  .track:hover { background: rgba(120, 120, 128, 0.08); }
+  .track.active {
+    background: rgba(120, 120, 128, 0.14);
+    font-weight: 600;
+  }
   .track .num {
-    opacity: 0.4;
+    color: var(--ios-label-tertiary);
     font-variant-numeric: tabular-nums;
     width: 18px;
     font-size: 10px;
+    font-weight: 500;
   }
   .track.active .num { opacity: 0; }
   .track .play-icon {
     position: absolute;
     left: 8px;
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
     opacity: 0;
-    color: #0a0a1a;
-    transition: opacity 0.3s ease;
+    color: var(--ios-label);
+    transition: opacity 0.25s var(--ease-ios);
   }
   .track.active .play-icon { opacity: 1; }
   .track .name { flex: 1; }
-  .track .dur { opacity: 0.4; font-size: 10px; }
-  .track.active .dur { opacity: 0.6; }
+  .track .dur {
+    color: var(--ios-label-tertiary);
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+  .track.active .dur { color: var(--ios-label-secondary); }
 
   .playing-bar {
-    margin-top: 6px;
-    height: 3px;
-    border-radius: 3px;
-    background: rgba(0,0,0,0.12);
+    margin-top: 4px;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(120, 120, 128, 0.16);
     overflow: hidden;
     flex-shrink: 0;
   }
@@ -286,10 +594,12 @@
     display: block;
     height: 100%;
     width: 0%;
-    background: #0a0a1a;
+    background: var(--ios-label);
+    border-radius: 2px;
     transition: width 0.3s linear;
   }
 
+  /* ================ CONTROLS (Wheel) ================ */
   .controls {
     margin-top: 20px;
     display: flex;
@@ -301,41 +611,54 @@
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #34343c, #14141a);
+    background: radial-gradient(circle at 32% 28%, #38383f 0%, #202026 40%, #0e0e12 100%);
     box-shadow:
-      inset 0 2px 4px rgba(255,255,255,0.10),
-      inset 0 -4px 10px rgba(0,0,0,0.8),
-      0 0 0 1px rgba(255,255,255,0.08);
+      inset 0 2px 3px rgba(255, 255, 255, 0.1),
+      inset 0 -4px 12px rgba(0, 0, 0, 0.85),
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 8px 20px rgba(0, 0, 0, 0.5);
     position: relative;
-    transition: box-shadow 2.5s ease;
+    transition: box-shadow 0.35s var(--ease-ios), transform 0.2s var(--ease-ios);
     pointer-events: auto;
     cursor: pointer;
   }
+  .wheel:active {
+    transform: scale(0.97);
+    box-shadow:
+      inset 0 2px 4px rgba(0, 0, 0, 0.5),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.7),
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 4px 12px rgba(0, 0, 0, 0.45);
+  }
   .wheel-center {
     position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    width: 54px; height: 54px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #1a1a20, #0c0c10);
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.9);
+    background: radial-gradient(circle at 32% 28%, #1c1c22 0%, #0d0d11 100%);
+    box-shadow:
+      inset 0 1px 3px rgba(0, 0, 0, 0.95),
+      0 0 0 0.5px rgba(255, 255, 255, 0.05);
     pointer-events: none;
   }
 
+  /* ================ CONTENT SPACER ================ */
   #content {
     position: relative;
     z-index: 4;
     pointer-events: none;
   }
-  .spacer { height: 500vh; }
-
+  .spacer { height: 1800vh; }
   .cta-section {
     min-height: 100vh;
     pointer-events: none;
     position: relative;
   }
 
-  /* ================= КНОПКА TELEGRAM ================= */
+  /* ================ TELEGRAM BUTTON ================ */
   .tg-btn {
     position: fixed;
     bottom: 8vh;
@@ -343,30 +666,28 @@
     transform: translateX(-50%) scale(0.95);
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px 32px;
+    gap: 10px;
+    padding: 15px 30px;
     border-radius: 100px;
-    background: #7aa2ff;
-    border: 2px solid #7aa2ff;
-    color: #050508;
-    font-size: 13px;
+    background: var(--ios-blue);
+    border: none;
+    color: #fff;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 2.5px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     text-decoration: none;
     z-index: 20;
     pointer-events: auto;
     opacity: 0;
     box-shadow:
-      0 0 0 rgba(122,162,255,0),
-      0 20px 60px rgba(122,162,255,0.25);
+      0 0 0 rgba(0, 122, 255, 0),
+      0 16px 40px rgba(0, 122, 255, 0.3);
     transition:
-      opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 1s cubic-bezier(0.4, 0, 0.2, 1),
-      background 0.35s ease,
-      color 0.35s ease,
-      border-color 0.35s ease,
-      box-shadow 0.35s ease;
+      opacity 0.9s var(--ease-ios),
+      transform 0.9s var(--ease-ios),
+      background 0.3s var(--ease-ios),
+      box-shadow 0.3s var(--ease-ios);
   }
   .tg-btn.show {
     opacity: 1;
@@ -374,14 +695,13 @@
   }
   .tg-btn:hover {
     background: #fff;
-    color: #050508;
-    border-color: #fff;
+    color: var(--ios-blue);
     box-shadow:
-      0 0 60px rgba(122,162,255,0.7),
-      0 20px 60px rgba(122,162,255,0.5);
-    transform: translateX(-50%) scale(1.05);
+      0 0 60px rgba(0, 122, 255, 0.7),
+      0 16px 40px rgba(0, 122, 255, 0.45);
+    transform: translateX(-50%) scale(1.04);
   }
-  .tg-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .tg-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
   .cta-hint {
     position: fixed;
@@ -391,30 +711,114 @@
     font-size: 9px;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
+    color: rgba(255, 255, 255, 0.3);
     z-index: 20;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+    transition: opacity 0.9s var(--ease-ios) 0.15s;
     text-align: center;
     white-space: nowrap;
+    font-weight: 500;
   }
   .cta-hint.show { opacity: 1; }
 
+  /* ================ LABEL ================ */
   .label {
     position: fixed;
-    top: 30px; left: 30px;
-    font-size: 12px;
-    letter-spacing: 3px;
+    top: 30px;
+    left: 30px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
     text-transform: uppercase;
-    opacity: 0.4;
+    opacity: 0.35;
     z-index: 5;
-    transition: opacity 2s ease;
+    transition: opacity 1.8s var(--ease-ios);
     pointer-events: none;
   }
 
+  /* ================ HEADPHONE JACK ================ */
+  #airpods-layer {
+    position: fixed;
+    top: calc(50% + 500px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5; /* BELOW player (z-index: 20) — tip naturally hides behind body */
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s var(--ease-ios), visibility 0.35s var(--ease-ios);
+    will-change: top, transform;
+  }
+
+  .headphone-jack {
+    width: 20px;
+    height: 92px;
+    position: relative;
+    filter: drop-shadow(0 -2px 5px rgba(0, 0, 0, 0.55));
+    margin-bottom: -2px;
+    z-index: 2;
+    transition: filter 0.3s var(--ease-ios), opacity 0.25s var(--ease-ios);
+    transform-origin: center top;
+  }
+  .headphone-jack.inserted {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+  }
+  .headphone-jack svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  .headphone-cable {
+    width: 120px;
+    height: 220px;
+    position: relative;
+    filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.5));
+    margin-top: -2px;
+    transform-origin: top center;
+  }
+  .headphone-cable svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+  .headphone-cable.plugged {
+    animation: cableSway 4.5s ease-in-out infinite;
+  }
+  @keyframes cableSway {
+    0%, 100% { transform: rotate(-0.8deg) translateX(0); }
+    50%      { transform: rotate(0.9deg) translateX(1.5px); }
+  }
+
+  /* Soft ground shadow under jack while approaching */
+  #airpods-layer::before {
+    content: '';
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.35) 0%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  #airpods-layer.approaching::before {
+    opacity: 1;
+  }
+
+
+  /* ================ MOBILE ================ */
   @media (max-width: 768px) {
-    .label { top: 20px; left: 20px; font-size: 10px; }
+    .label { top: 20px; left: 20px; font-size: 9px; }
     .player {
       width: min(92vw, 340px);
       height: auto;
@@ -430,15 +834,18 @@
       width: min(14vw, 46px);
       height: min(14vw, 46px);
     }
-    .screen-title { font-size: 16px; }
-    .track { font-size: 11px; padding: 6px 7px; }
-    .scroll-title { font-size: 15px; letter-spacing: 3px; }
+    .app-icon { width: 38px; height: 38px; border-radius: 10px; }
+    .app-icon svg { width: 22px; height: 22px; }
+    .app-name { font-size: 8px; }
     .tg-btn {
-      font-size: 11px;
-      padding: 14px 26px;
-      letter-spacing: 2px;
+      font-size: 10px;
+      padding: 13px 24px;
+      letter-spacing: 1.5px;
     }
-    .spacer { height: 450vh; }
+    .spacer { height: 1600vh; }
+    .headphone-cable { width: 100px; height: 180px; }
+    .headphone-jack { width: 18px; height: 82px; }
+    .volume-slider { width: 38px; height: 130px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -453,16 +860,21 @@
 
 <div id="stage">
   <div class="player" id="player">
+
+    <div class="jack-port"></div>
+
     <div class="screen" id="screen">
 
+      <!-- SCROLL DOWN -->
       <div id="scroll-layer">
         <div class="scroll-title">Scroll Down</div>
         <div class="scroll-sub">to wake the player</div>
         <div class="scroll-arrow"></div>
       </div>
 
+      <!-- BOOT -->
       <div id="boot-layer">
-        <div class="apple-small">
+        <div class="apple-logo">
           <svg viewBox="0 0 24 28" xmlns="http://www.w3.org/2000/svg">
             <path fill="#0a0a1a" d="M17.86 14.87c-.02-2.4 1.96-3.55 2.05-3.61-1.12-1.64-2.86-1.86-3.48-1.89-1.48-.15-2.89.87-3.64.87-.75 0-1.91-.85-3.14-.83-1.62.02-3.11.94-3.94 2.38-1.68 2.92-.43 7.24 1.21 9.62.8 1.17 1.76 2.47 3.02 2.42 1.21-.05 1.67-.78 3.13-.78 1.46 0 1.87.78 3.14.75 1.29-.02 2.12-1.18 2.9-2.35.92-1.34 1.29-2.63 1.31-2.69-.03-.01-2.51-.96-2.56-3.89zM15.4 7.87c.66-.8 1.11-1.91.98-3.03-.95.04-2.11.63-2.79 1.43-.61.71-1.15 1.85-1.01 2.94 1.07.08 2.16-.54 2.82-1.34z"/>
           </svg>
@@ -470,31 +882,99 @@
         <div class="boot-bar"><span id="boot-progress"></span></div>
       </div>
 
+      <!-- iOS HOME -->
+      <div id="home-layer">
+        <div class="home-status">
+          <span class="time">9:41</span>
+          <div class="icons">
+            <svg viewBox="0 0 16 12"><path d="M1 4h2v4H1zM5 2.5h2v5.5H5zM9 1h2v7H9zM13 3h2v5h-2z" opacity="0.9"/></svg>
+            <svg viewBox="0 0 16 12"><path d="M8 10.5a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4zM5.5 7.5a3.5 3.5 0 0 1 5 0l.8-.8a4.6 4.6 0 0 0-6.6 0zM2.8 5a7.3 7.3 0 0 1 10.4 0l.8-.8a8.4 8.4 0 0 0-12 0z"/></svg>
+            <svg viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="20" height="11" rx="3" fill="none" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="15" height="8" rx="1.5"/><rect x="22" y="4" width="2" height="4" rx="1" opacity="0.6"/></svg>
+          </div>
+        </div>
+
+        <div class="home-grid">
+          <div class="app app-music">
+            <div class="app-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+            </div>
+            <div class="app-name">Music</div>
+          </div>
+          <div class="app app-photos">
+            <div class="app-icon">
+              <svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="2"/><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 14H4l5-5 3 3 4-4 4 4v2z"/></svg>
+            </div>
+            <div class="app-name">Photos</div>
+          </div>
+          <div class="app app-phone">
+            <div class="app-icon">
+              <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></svg>
+            </div>
+            <div class="app-name">Phone</div>
+          </div>
+          <div class="app app-files">
+            <div class="app-icon">
+              <svg viewBox="0 0 24 24"><path d="M10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-2z"/></svg>
+            </div>
+            <div class="app-name">Files</div>
+          </div>
+          <div class="app app-games">
+            <div class="app-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 6H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+            </div>
+            <div class="app-name">Games</div>
+          </div>
+          <div class="app app-clock">
+            <div class="app-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm.5-13H11v6l5 3 .8-1.3-4.3-2.5V7z"/></svg>
+            </div>
+            <div class="app-name">Clock</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VOLUME ANIMATION -->
+      <div id="volume-anim">
+        <div class="volume-slider">
+          <div class="vol-fill"></div>
+          <div class="vol-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="vol-note">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYLIST -->
       <div id="playlist-layer">
-        <div class="screen-header">
-          <span>NOW PLAYING</span>
+        <div class="now-playing-bar">
+          <span>Now Playing</span>
           <span id="clock">--:--</span>
         </div>
-        <div class="screen-title">Dvorets Muz</div>
-        <div class="screen-sub">Midnight Session · Vol. 1</div>
+        <div class="music-header">
+          <div class="music-title">Dvorets Muz</div>
+          <div class="music-sub">Midnight Session · Vol. 1</div>
+        </div>
 
         <canvas id="visualizer"></canvas>
 
-        <!-- 3 рабочих трека -->
         <ul class="tracklist" id="tracklist">
-  <li class="track active" data-src="https://cdn.pixabay.com/download/audio/2021/11/25/audio_91b32e02f9.mp3?filename=chill-lofi-song-8444.mp3">
-    <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
-    <span class="num">01</span><span class="name">Vapor Trail</span><span class="dur">3:05</span>
-  </li>
-  <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=lofi-study-112191.mp3">
-    <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
-    <span class="num">02</span><span class="name">Neon Drive</span><span class="dur">2:12</span>
-  </li>
-  <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3">
-    <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
-    <span class="num">03</span><span class="name">Lo-Fi Night</span><span class="dur">2:30</span>
-  </li>
-</ul>
+          <li class="track active" data-src="https://cdn.pixabay.com/download/audio/2021/11/25/audio_91b32e02f9.mp3?filename=chill-lofi-song-8444.mp3">
+            <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+            <span class="num">01</span><span class="name">Vapor Trail</span><span class="dur">3:05</span>
+          </li>
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=lofi-study-112191.mp3">
+            <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+            <span class="num">02</span><span class="name">Neon Drive</span><span class="dur">2:12</span>
+          </li>
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3">
+            <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+            <span class="num">03</span><span class="name">Lo-Fi Night</span><span class="dur">2:30</span>
+          </li>
+        </ul>
 
         <div class="playing-bar"><span id="progress"></span></div>
       </div>
@@ -504,6 +984,75 @@
     <div class="controls">
       <div class="wheel" id="wheel"><div class="wheel-center"></div></div>
     </div>
+  </div>
+
+</div><!-- /stage -->
+
+<!-- HEADPHONE JACK — outside stage so position:fixed is viewport-relative -->
+<div id="airpods-layer">
+  <div class="headphone-jack">
+    <svg viewBox="0 0 20 92" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="jackBody" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#d4d4d9"/>
+          <stop offset="18%" stop-color="#f7f7fa"/>
+          <stop offset="50%" stop-color="#fafafc"/>
+          <stop offset="82%" stop-color="#e6e6eb"/>
+          <stop offset="100%" stop-color="#a8a8ae"/>
+        </linearGradient>
+        <linearGradient id="jackMetal" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#9a9a9e"/>
+          <stop offset="22%" stop-color="#f2f2f5"/>
+          <stop offset="55%" stop-color="#dcdce0"/>
+          <stop offset="85%" stop-color="#b8b8bc"/>
+          <stop offset="100%" stop-color="#86868a"/>
+        </linearGradient>
+        <linearGradient id="jackGold" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#8a6a24"/>
+          <stop offset="25%" stop-color="#e8ca80"/>
+          <stop offset="55%" stop-color="#c9a961"/>
+          <stop offset="85%" stop-color="#a4853a"/>
+          <stop offset="100%" stop-color="#6e5318"/>
+        </linearGradient>
+      </defs>
+
+      <path d="M 5 8 Q 5 2 10 2 Q 15 2 15 8 L 15 8 Z" fill="url(#jackGold)"/>
+      <ellipse cx="8" cy="5" rx="1.3" ry="0.9" fill="rgba(255,255,255,0.7)"/>
+
+      <rect x="5" y="8" width="10" height="36" rx="1.2" fill="url(#jackMetal)"/>
+      <rect x="5" y="8" width="10" height="3.5" fill="#0c0c0e"/>
+      <rect x="5" y="21" width="10" height="2.2" fill="#0c0c0e"/>
+      <rect x="5" y="31" width="10" height="2.2" fill="#0c0c0e"/>
+
+      <rect x="2" y="44" width="16" height="48" rx="4" fill="url(#jackBody)"/>
+      <rect x="4" y="52" width="12" height="0.8" fill="#b4b4ba" opacity="0.7"/>
+      <rect x="4" y="58" width="12" height="0.8" fill="#b4b4ba" opacity="0.7"/>
+      <rect x="4" y="64" width="12" height="0.8" fill="#b4b4ba" opacity="0.7"/>
+      <rect x="4" y="70" width="12" height="0.8" fill="#b4b4ba" opacity="0.7"/>
+      <rect x="4" y="76" width="12" height="0.8" fill="#b4b4ba" opacity="0.7"/>
+      <rect x="4" y="82" width="12" height="0.8" fill="#b4b4ba" opacity="0.7"/>
+      <rect x="3.5" y="48" width="2.2" height="42" rx="1.1" fill="rgba(255,255,255,0.75)" opacity="0.55"/>
+    </svg>
+  </div>
+
+  <div class="headphone-cable">
+    <svg viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="cableGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#9e9ea4"/>
+          <stop offset="22%" stop-color="#e8e8eb"/>
+          <stop offset="50%" stop-color="#fafafc"/>
+          <stop offset="78%" stop-color="#e8e8eb"/>
+          <stop offset="100%" stop-color="#9e9ea4"/>
+        </linearGradient>
+      </defs>
+      <path d="M 60 0 C 55 40, 75 80, 70 120 C 65 160, 45 190, 60 220"
+            stroke="url(#cableGrad)" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+      <path d="M 60 0 C 55 40, 75 80, 70 120 C 65 160, 45 190, 60 220"
+            stroke="rgba(0,0,0,0.15)" stroke-width="1.8" fill="none" stroke-linecap="round" transform="translate(1.5,0)"/>
+      <path d="M 60 0 C 55 40, 75 80, 70 120 C 65 160, 45 190, 60 220"
+            stroke="rgba(255,255,255,0.65)" stroke-width="1.3" fill="none" stroke-linecap="round" transform="translate(-1,0)"/>
+    </svg>
   </div>
 </div>
 
@@ -534,16 +1083,21 @@
 
   const scrollLayer = document.getElementById('scroll-layer');
   const bootLayer = document.getElementById('boot-layer');
+  const homeLayer = document.getElementById('home-layer');
+  const airpodsLayer = document.getElementById('airpods-layer');
   const playlistLayer = document.getElementById('playlist-layer');
+  const volumeAnim = document.getElementById('volume-anim');
   const bootProgress = document.getElementById('boot-progress');
   const tgBtn = document.getElementById('tgBtn');
   const ctaHint = document.getElementById('ctaHint');
   const roomLight = document.getElementById('room-light');
   const label = document.querySelector('.label');
   const wheel = document.getElementById('wheel');
+  const jackPort = document.querySelector('.jack-port');
+  const headphoneJack = document.querySelector('.headphone-jack');
+  const headphoneCable = document.querySelector('.headphone-cable');
 
   let musicStarted = false;
-  let playlistVisible = false;
   let currentTrackIndex = 0;
   let switchingTimeout = null;
 
@@ -563,19 +1117,13 @@
   function playTrack(index) {
     if (index < 0 || index >= tracks.length) return;
     currentTrackIndex = index;
-
     tracks.forEach(t => t.classList.remove('active'));
     tracks[index].classList.add('active');
 
     const src = tracks[index].dataset.src;
-    console.log('[Player] Playing:', src);
-
     screen.classList.add('switching');
     clearTimeout(switchingTimeout);
-    switchingTimeout = setTimeout(() => {
-      console.warn('[Player] Force clear switching');
-      clearSwitching();
-    }, 3000);
+    switchingTimeout = setTimeout(clearSwitching, 3000);
 
     audio.src = src;
     audio.volume = 0.6;
@@ -584,26 +1132,16 @@
     if (p && p.then) {
       p.then(() => {
         musicStarted = true;
-        console.log('[Player] Started:', src);
-        setTimeout(() => clearSwitching(), 300);
-      }).catch(err => {
-        console.warn('[Player] Play failed:', err.name);
+        setTimeout(clearSwitching, 250);
+      }).catch(() => {
         musicStarted = false;
         clearSwitching();
       });
     }
   }
 
-  audio.addEventListener('playing', () => {
-    musicStarted = true;
-    clearSwitching();
-  });
-
-  audio.addEventListener('error', (e) => {
-    console.warn('[Player] Audio error:', audio.src);
-    musicStarted = false;
-    clearSwitching();
-  });
+  audio.addEventListener('playing', () => { musicStarted = true; clearSwitching(); });
+  audio.addEventListener('error', () => { musicStarted = false; clearSwitching(); });
 
   tracks.forEach((track, i) => {
     track.addEventListener('click', (e) => {
@@ -615,16 +1153,12 @@
   });
 
   audio.addEventListener('ended', () => {
-    const next = (currentTrackIndex + 1) % tracks.length;
-    playTrack(next);
+    playTrack((currentTrackIndex + 1) % tracks.length);
   });
 
   wheel.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (!audio.src) {
-      playTrack(0);
-      return;
-    }
+    if (!audio.src) { playTrack(0); return; }
     if (audio.paused) {
       audio.play().then(() => musicStarted = true).catch(() => {});
     } else {
@@ -662,38 +1196,31 @@
   let _barPhase = 0;
   function drawVisualizer() {
     requestAnimationFrame(drawVisualizer);
-
     const dpr = window.devicePixelRatio || 1;
     const w = canvas.width / dpr;
     const h = canvas.height / dpr;
     if (w === 0) return;
-
     ctx.clearRect(0, 0, w, h);
-
     const barCount = 32;
     const barWidth = w / barCount;
-    const gap = 2;
-
-    const intensity = musicStarted ? 0.45 : 0.12;
-    _barPhase += musicStarted ? 0.08 : 0.02;
-
+    const gap = 1.5;
+    const playing = musicStarted && !audio.paused;
+    const intensity = playing ? 0.55 : 0.08;
+    _barPhase += playing ? 0.09 : 0.015;
     for (let i = 0; i < barCount; i++) {
-      const wave1 = Math.sin(_barPhase + i * 0.5);
-      const wave2 = Math.sin(_barPhase * 1.7 + i * 0.9);
-      const wave3 = Math.sin(_barPhase * 0.6 + i * 1.3);
-      const combined = (wave1 + wave2 + wave3) / 3;
-
-      const value = 0.15 + Math.abs(combined) * intensity + 0.05;
+      const wave = Math.sin(_barPhase + i * 0.48) + Math.sin(_barPhase * 1.65 + i * 0.85) + Math.sin(_barPhase * 0.55 + i * 1.25);
+      const combined = wave / 3;
+      const centerBoost = 1 - Math.abs(i - barCount / 2) / (barCount / 2) * 0.25;
+      const value = 0.12 + Math.abs(combined) * intensity * centerBoost + 0.04;
       const barHeight = Math.max(2, value * h);
       const x = i * barWidth;
       const y = h - barHeight;
-
       const grad = ctx.createLinearGradient(0, y, 0, h);
-      grad.addColorStop(0, '#7aa2ff');
-      grad.addColorStop(0.6, '#3a5fb8');
+      grad.addColorStop(0, playing ? '#8bb4ff' : '#7aa2ff');
+      grad.addColorStop(0.55, playing ? '#4a6fd0' : '#3a5fb8');
       grad.addColorStop(1, '#0a0a1a');
       ctx.fillStyle = grad;
-      ctx.fillRect(x + gap/2, y, barWidth - gap, barHeight);
+      ctx.fillRect(x + gap / 2, y, barWidth - gap, barHeight);
     }
   }
   drawVisualizer();
@@ -722,63 +1249,63 @@
   updateTargetProgress();
 
   window.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX / window.innerWidth - 0.5) * 8;
-    mouseY = (e.clientY / window.innerHeight - 0.5) * -8;
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 6;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * -6;
   });
 
   let screenOn = false;
   let bootVisible = false;
+  let homeVisible = false;
+  let airpodsVisible = false;
+  let playlistVisible = false;
   let btnVisible = false;
+  let volumeAnimShown = false;
+  let jackPlugged = false;
 
   function tick() {
     requestAnimationFrame(tick);
 
-    currentProgress += (targetProgress - currentProgress) * 0.045;
+    currentProgress += (targetProgress - currentProgress) * 0.05;
     smoothMouseX += (mouseX - smoothMouseX) * 0.06;
     smoothMouseY += (mouseY - smoothMouseY) * 0.06;
 
     const p = currentProgress;
 
-    const liftProgress = Math.min(1, p / 0.25);
+    // PHASE 1: LIFT PLAYER
+    const liftProgress = Math.min(1, p / 0.12);
     const easeLift = 1 - Math.pow(1 - liftProgress, 3);
-
-    const scale = 0.85 + (1.0 - 0.85) * easeLift;
+    const scale = 0.85 + 0.15 * easeLift;
     const rotX = 15 + (0 - 15) * easeLift;
     const transY = 40 + (0 - 40) * easeLift;
+    const mouseInfluence = Math.max(0, (p - 0.10) / 0.20);
+    const finalRotX = rotX + smoothMouseY * 0.3 * mouseInfluence;
+    const finalRotY = smoothMouseX * 0.3 * mouseInfluence;
+    player.style.transform = `scale(${scale}) rotateX(${finalRotX}deg) rotateY(${finalRotY}deg) translateY(${transY}px)`;
 
-    const mouseInfluence = Math.max(0, (p - 0.20) / 0.30);
-    const finalRotX = rotX + smoothMouseY * 0.35 * mouseInfluence;
-    const finalRotY = smoothMouseX * 0.35 * mouseInfluence;
-
-    player.style.transform =
-      `scale(${scale}) rotateX(${finalRotX}deg) rotateY(${finalRotY}deg) translateY(${transY}px)`;
-
-    const glowAmount = Math.max(0, (p - 0.30) / 0.40);
+    const glowAmount = Math.max(0, (p - 0.15) / 0.35);
     player.style.boxShadow = `
       inset 0 1px 1px rgba(255,255,255,${0.12 + 0.04 * glowAmount}),
-      inset 0 -2px 6px rgba(0,0,0,0.6),
-      0 40px 80px rgba(0,0,0,${0.7 + 0.1 * glowAmount}),
-      0 0 0 1px rgba(255,255,255,${0.08 + 0.04 * glowAmount})
+      inset 0 -2px 4px rgba(0,0,0,0.7),
+      0 50px 100px rgba(0,0,0,${0.75 + 0.05 * glowAmount}),
+      0 20px 40px rgba(0,0,0,${0.5 + 0.1 * glowAmount}),
+      0 0 0 1px rgba(255,255,255,${0.06 + 0.04 * glowAmount})
     `;
 
-    const screenOnProgress = Math.max(0, Math.min(1, (p - 0.25) / 0.15));
-    if (screenOnProgress > 0.5 && !screenOn) {
-      screen.classList.add('on');
-      screenOn = true;
-    } else if (screenOnProgress <= 0.5 && screenOn) {
-      screen.classList.remove('on');
-      screenOn = false;
-    }
+    // PHASE 2: SCREEN ON
+    const screenOnProgress = Math.max(0, Math.min(1, (p - 0.10) / 0.08));
+    if (screenOnProgress > 0.5 && !screenOn) { screen.classList.add('on'); screenOn = true; }
+    else if (screenOnProgress <= 0.5 && screenOn) { screen.classList.remove('on'); screenOn = false; }
 
-    scrollLayer.style.opacity = Math.max(0, 1 - (p - 0.15) / 0.15);
+    scrollLayer.style.opacity = Math.max(0, 1 - p / 0.10);
 
-    const bootOpacity = Math.max(0, Math.min(1, (p - 0.30) / 0.10)) *
-                        Math.max(0, Math.min(1, (0.65 - p) / 0.10));
+    // PHASE 3: BOOT
+    const bootOpacity = Math.max(0, Math.min(1, (p - 0.18) / 0.06)) *
+                        Math.max(0, Math.min(1, (0.34 - p) / 0.06));
     if (bootOpacity > 0.01) {
       bootLayer.style.opacity = bootOpacity;
       bootLayer.style.visibility = 'visible';
       bootVisible = true;
-      const bootPct = Math.min(100, Math.max(0, ((p - 0.30) / 0.30) * 100));
+      const bootPct = Math.min(100, Math.max(0, ((p - 0.18) / 0.16) * 100));
       bootProgress.style.width = bootPct + '%';
     } else {
       if (bootVisible) {
@@ -788,35 +1315,138 @@
       }
     }
 
-    const playlistOpacity = Math.max(0, Math.min(1, (p - 0.58) / 0.10));
+    // PHASE 4: iOS HOME
+    const homeOpacity = Math.max(0, Math.min(1, (p - 0.34) / 0.06)) *
+                        Math.max(0, Math.min(1, (0.58 - p) / 0.06));
+    if (homeOpacity > 0.01) {
+      homeLayer.style.opacity = homeOpacity;
+      homeLayer.style.visibility = 'visible';
+      homeVisible = true;
+    } else {
+      if (homeVisible) {
+        homeLayer.style.opacity = 0;
+        homeLayer.style.visibility = 'hidden';
+        homeVisible = false;
+      }
+    }
+    // PHASE 5: JACK + VOLUME + PLAYLIST
+    // Plug window: scroll 0.58 → 0.80
+    const plugProgress = Math.max(0, Math.min(1, (p - 0.58) / 0.22));
+
+    if (plugProgress > 0.01) {
+      airpodsLayer.style.opacity = 1;
+      airpodsLayer.style.visibility = 'visible';
+      airpodsVisible = true;
+
+      // No clip-path — metal hides naturally behind player (z-index 5 < 20)
+      headphoneJack.style.clipPath = '';
+
+      // Ease: slow approach → soft seat
+      const easePlug = plugProgress < 0.5
+        ? 4 * plugProgress * plugProgress * plugProgress
+        : 1 - Math.pow(-2 * plugProgress + 2, 3) / 2;
+
+      // Anchor to real jack-port position on screen
+      const portRect = jackPort.getBoundingClientRect();
+      const jackH = headphoneJack.offsetHeight || 92;
+      // SVG: metal ends ~46% down; white body is the rest.
+      // Seat so metal/white junction sits just BELOW port bottom —
+      // white block never enters the socket.
+      const metalRatio = 0.46;
+      const endY = portRect.bottom - jackH * metalRatio;
+      // Start: well below the port
+      const startY = portRect.top + 280;
+
+      const currentY = startY + (endY - startY) * easePlug;
+      airpodsLayer.style.top = currentY + 'px';
+      airpodsLayer.style.left = (portRect.left + portRect.width / 2) + 'px';
+      airpodsLayer.style.transform = 'translateX(-50%)';
+
+      // Approaching shadow
+      if (plugProgress > 0.1 && plugProgress < 0.95) {
+        airpodsLayer.classList.add('approaching');
+      } else {
+        airpodsLayer.classList.remove('approaching');
+      }
+
+      // Connected when fully seated (white block under port)
+      if (plugProgress >= 0.90) {
+        if (!jackPlugged) {
+          jackPlugged = true;
+          headphoneJack.classList.add('inserted');
+          headphoneCable.classList.add('plugged');
+        }
+      } else if (jackPlugged && plugProgress < 0.78) {
+        jackPlugged = false;
+        headphoneJack.classList.remove('inserted');
+        headphoneCable.classList.remove('plugged');
+      }
+
+      // VOLUME ANIMATION — exact seat moment
+      if (plugProgress >= 0.91 && !volumeAnimShown) {
+        volumeAnimShown = true;
+        volumeAnim.classList.add('show');
+        setTimeout(() => {
+          volumeAnim.classList.remove('show');
+        }, 2400);
+      }
+    } else {
+      if (airpodsVisible && p < 0.52) {
+        airpodsLayer.style.opacity = 0;
+        airpodsLayer.style.visibility = 'hidden';
+        airpodsVisible = false;
+        volumeAnimShown = false;
+        volumeAnim.classList.remove('show');
+        jackPlugged = false;
+        headphoneJack.classList.remove('inserted');
+        headphoneJack.style.clipPath = '';
+        headphoneCable.classList.remove('plugged');
+        airpodsLayer.classList.remove('approaching');
+      }
+    }
+
+    // PHASE 6: PLAYLIST (appears after volume anim / connection)
+    const playlistOpacity = Math.max(0, Math.min(1, (p - 0.78) / 0.06)) *
+                            Math.max(0, Math.min(1, (1.05 - p) / 0.08));
     if (playlistOpacity > 0.01) {
       playlistLayer.style.opacity = playlistOpacity;
       playlistLayer.style.visibility = 'visible';
-      if (!playlistVisible) {
-        playlistVisible = true;
-        setTimeout(resizeCanvas, 200);
-      }
+      playlistLayer.style.pointerEvents = 'auto';
+      playlistVisible = true;
     } else {
       if (playlistVisible) {
         playlistLayer.style.opacity = 0;
         playlistLayer.style.visibility = 'hidden';
+        playlistLayer.style.pointerEvents = 'none';
         playlistVisible = false;
       }
     }
 
-    const atmosphere = Math.max(0, Math.min(1, (p - 0.50) / 0.30));
-    roomLight.style.opacity = atmosphere;
-
-    if (atmosphere > 0.3) {
-      body.style.background = '#0a0a14';
-    } else {
-      body.style.background = '#000000';
+    // Auto-start first track once playlist is fully visible and jack plugged
+    if (playlistOpacity > 0.85 && jackPlugged && !musicStarted && !audio.src) {
+      playTrack(0);
     }
 
-    // ========== КНОПКА TELEGRAM — ЕДЕТ ПО СКРОЛЛУ ==========
-    // 1. Появление (fade-in) — с 70% скролла
-    // 2. Подъём снизу вверх — с 78% до 100%, привязан к скроллу
-    const btnProgress = Math.max(0, Math.min(1, (p - 0.70) / 0.08));
+    // ATMOSPHERE + music glow
+    const atmosphere = Math.max(0, Math.min(1, (p - 0.20) / 0.30));
+    const musicGlow = musicStarted && !audio.paused ? 0.15 : 0;
+    roomLight.style.opacity = Math.min(1, atmosphere + musicGlow);
+    body.style.background = atmosphere > 0.3 ? '#0a0a14' : '#000000';
+
+    // Extra player glow when music is playing
+    if (musicStarted && !audio.paused && p > 0.7) {
+      player.style.boxShadow = `
+        inset 0 1px 1px rgba(255,255,255,0.16),
+        inset 0 -2px 4px rgba(0,0,0,0.7),
+        0 50px 100px rgba(0,0,0,0.8),
+        0 20px 40px rgba(0,0,0,0.55),
+        0 0 0 1px rgba(255,255,255,0.1),
+        0 0 40px rgba(122,162,255,0.18)
+      `;
+    }
+
+    // PHASE 7: TELEGRAM BUTTON
+    const btnProgress = Math.max(0, Math.min(1, (p - 0.92) / 0.04));
     if (btnProgress > 0.01 && !btnVisible) {
       tgBtn.classList.add('show');
       ctaHint.classList.add('show');
@@ -827,8 +1457,7 @@
       btnVisible = false;
     }
 
-    const riseProgress = Math.max(0, Math.min(1, (p - 0.78) / 0.22));
-    // easeInOutCubic — мягкий старт и мягкое торможение
+    const riseProgress = Math.max(0, Math.min(1, (p - 0.95) / 0.05));
     const easeRise = riseProgress < 0.5
       ? 4 * riseProgress * riseProgress * riseProgress
       : 1 - Math.pow(-2 * riseProgress + 2, 3) / 2;
@@ -837,7 +1466,7 @@
     tgBtn.style.bottom = bottomVh + 'vh';
     ctaHint.style.bottom = (bottomVh - 3) + 'vh';
 
-    label.style.opacity = 0.4 + atmosphere * 0.3;
+    label.style.opacity = 0.35 + atmosphere * 0.25;
   }
   tick();
 
