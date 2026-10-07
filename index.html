@@ -51,7 +51,7 @@
     perspective: 1400px;
   }
 
-  /* ================= ПЛЕЕР — посветлее ================= */
+  /* ================= ПЛЕЕР ================= */
   .player {
     position: relative;
     width: 340px;
@@ -297,7 +297,7 @@
     transition: width 0.3s linear;
   }
 
-  /* ================= КОЛЕСО — без подсветки ================= */
+  /* ================= КОЛЕСО ================= */
   .controls {
     margin-top: 20px;
     display: flex;
@@ -344,12 +344,12 @@
     position: relative;
   }
 
-  /* ================= КНОПКА TELEGRAM ================= */
+  /* ================= КНОПКА TELEGRAM — ПОДНИМАЕТСЯ В ЦЕНТР ================= */
   .tg-btn {
     position: fixed;
     bottom: 8vh;
     left: 50%;
-    transform: translateX(-50%) translateY(40px) scale(0.95);
+    transform: translateX(-50%) translateY(0) scale(1);
     display: inline-flex;
     align-items: center;
     gap: 14px;
@@ -365,13 +365,15 @@
     text-decoration: none;
     z-index: 20;
     pointer-events: auto;
+    /* bottom анимируется JS-ом — плавный подъём в центр */
     transition:
-      opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 1.6s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
       background 0.4s ease,
       color 0.4s ease,
       border-color 0.4s ease,
-      box-shadow 0.4s ease;
+      box-shadow 0.4s ease,
+      bottom 1.4s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 0;
     box-shadow:
       0 0 0 rgba(122,162,255,0),
@@ -379,7 +381,10 @@
   }
   .tg-btn.show {
     opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  .tg-btn.centered {
+    /* JS меняет bottom на 50% — визуально кнопка оказывается в центре */
+    transform: translate(-50%, 50%) scale(1);
   }
   .tg-btn:hover {
     background: #fff;
@@ -388,8 +393,8 @@
     box-shadow:
       0 0 60px rgba(122,162,255,0.7),
       0 20px 60px rgba(122,162,255,0.5);
-    transform: translateX(-50%) translateY(-3px) scale(1.05);
   }
+
   .tg-btn svg { width: 20px; height: 20px; }
 
   .cta-hint {
@@ -404,7 +409,9 @@
     z-index: 20;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+    transition:
+      opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s,
+      bottom 1.4s cubic-bezier(0.4, 0, 0.2, 1);
     text-align: center;
     white-space: nowrap;
   }
@@ -446,9 +453,7 @@
       font-size: 11px;
       padding: 16px 28px;
       letter-spacing: 2px;
-      bottom: 6vh;
     }
-    .cta-hint { bottom: calc(6vh - 26px); }
     .spacer { height: 450vh; }
   }
 
@@ -491,24 +496,25 @@
 
         <canvas id="visualizer"></canvas>
 
+        <!-- 5 треков — все новые свежие ссылки -->
         <ul class="tracklist" id="tracklist">
           <li class="track active" data-src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">01</span><span class="name">Neon Drive</span><span class="dur">2:12</span>
           </li>
-          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=lofi-hip-hop-11489.mp3">
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/08/02/audio_2c4b1a4b1f.mp3?filename=lofi-hip-hop-11489.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">02</span><span class="name">Midnight Tape</span><span class="dur">2:30</span>
           </li>
-          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_34c6b3d7b6.mp3?filename=lofi-chill-medium-version-159456.mp3">
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=lofi-study-112191.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">03</span><span class="name">Chrome Sunset</span><span class="dur">1:45</span>
           </li>
-          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=lofi-study-112191.mp3">
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2021/11/25/audio_91b32e02f9.mp3?filename=chill-lofi-song-8444.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">04</span><span class="name">Vapor Trail</span><span class="dur">3:05</span>
           </li>
-          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2021/11/25/audio_91b32e02f9.mp3?filename=chill-lofi-song-8444.mp3">
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_34c6b3d7b6.mp3?filename=lofi-chill-medium-version-159456.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">05</span><span class="name">Afterglow</span><span class="dur">2:48</span>
           </li>
@@ -617,7 +623,6 @@
     clearSwitching();
   });
 
-  // При ошибке НЕ переключаем автоматически — оставляем пользователю выбор
   audio.addEventListener('error', (e) => {
     console.warn('[Player] Audio error:', audio.src);
     musicStarted = false;
@@ -667,7 +672,6 @@
     wheelTouchStartY = null;
   });
 
-  // ============ ЭКВАЛАЙЗЕР ============
   function resizeCanvas() {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
@@ -749,6 +753,7 @@
   let screenOn = false;
   let bootVisible = false;
   let btnVisible = false;
+  let btnCentered = false;
 
   function tick() {
     requestAnimationFrame(tick);
@@ -833,7 +838,12 @@
       body.style.background = '#000000';
     }
 
+    // ========== КНОПКА TELEGRAM — ПОДНИМАЕТСЯ В ЦЕНТР ==========
+    // Шаг 1: с 75% скролла кнопка появляется (fade in)
+    // Шаг 2: с 88% кнопка едет вверх к центру (bottom: 8vh → 50%)
     const btnProgress = Math.max(0, Math.min(1, (p - 0.75) / 0.10));
+    const centerProgress = Math.max(0, Math.min(1, (p - 0.88) / 0.10));
+
     if (btnProgress > 0.1 && !btnVisible) {
       tgBtn.classList.add('show');
       ctaHint.classList.add('show');
@@ -842,6 +852,29 @@
       tgBtn.classList.remove('show');
       ctaHint.classList.remove('show');
       btnVisible = false;
+    }
+
+    // Плавный подъём: bottom от 8vh до 50% (центр экрана)
+    // используем easeOutCubic для плавности
+    const easeCenter = 1 - Math.pow(1 - centerProgress, 3);
+    const bottomVh = 8 + (50 - 8) * easeCenter; // 8vh → 50vh
+    tgBtn.style.bottom = bottomVh + 'vh';
+
+    // Сдвиг вверх (translateY) нужен, чтобы центр кнопки был в точке 50vh
+    if (centerProgress > 0.01) {
+      tgBtn.style.transform = `translateX(-50%) translateY(50%) scale(1)`;
+    } else {
+      tgBtn.style.transform = `translateX(-50%) translateY(0) scale(1)`;
+    }
+
+    // Подсказка под кнопкой — едет вместе с ней
+    ctaHint.style.bottom = `calc(${bottomVh}vh - 30px)`;
+
+    // Если кнопка достигла центра — фиксируем флаг
+    if (centerProgress > 0.9 && !btnCentered) {
+      btnCentered = true;
+    } else if (centerProgress <= 0.1 && btnCentered) {
+      btnCentered = false;
     }
 
     label.style.opacity = 0.4 + atmosphere * 0.3;
