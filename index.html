@@ -22,6 +22,7 @@
     transition: background 2.5s ease;
   }
 
+  /* ================= СВЕТ В КОМНАТЕ ================= */
   #room-light {
     position: fixed;
     inset: 0;
@@ -38,6 +39,7 @@
     transition: opacity 2.5s ease;
   }
 
+  /* ================= СЦЕНА ================= */
   #stage {
     position: fixed;
     inset: 0;
@@ -49,17 +51,18 @@
     perspective: 1400px;
   }
 
+  /* ================= ПЛЕЕР — посветлее ================= */
   .player {
     position: relative;
     width: 340px;
     height: 620px;
     border-radius: 44px;
-    background: linear-gradient(145deg, #1a1a20, #0b0b10);
+    background: linear-gradient(145deg, #2e2e38, #16161c);
     box-shadow:
-      inset 0 1px 1px rgba(255,255,255,0.08),
+      inset 0 1px 1px rgba(255,255,255,0.12),
       inset 0 -2px 6px rgba(0,0,0,0.6),
-      0 40px 80px rgba(0,0,0,0.6),
-      0 0 0 1px rgba(255,255,255,0.04);
+      0 40px 80px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(255,255,255,0.08);
     transform: scale(0.85) rotateX(15deg) translateY(40px);
     transform-style: preserve-3d;
     transition: box-shadow 2s ease;
@@ -68,6 +71,7 @@
     will-change: transform;
   }
 
+  /* ================= ЭКРАН ================= */
   .screen {
     position: relative;
     width: 100%;
@@ -90,7 +94,6 @@
       0 0 40px rgba(122,162,255,0.45),
       0 0 0 1px rgba(255,255,255,0.15);
   }
-  /* Заменяем switching на более короткий и надёжный */
   .screen.switching { filter: brightness(0.25) blur(1.5px); }
 
   .screen::after {
@@ -106,6 +109,7 @@
   }
   .screen.on::after { opacity: 0.5; }
 
+  /* ================ SCROLL DOWN ================ */
   #scroll-layer {
     position: absolute;
     inset: 0;
@@ -155,6 +159,7 @@
     50%     { transform: rotate(45deg) translate(5px,5px); opacity: 1; }
   }
 
+  /* ================ BOOT ================ */
   #boot-layer {
     position: absolute;
     inset: 0;
@@ -196,6 +201,7 @@
     transition: width 0.3s ease-out;
   }
 
+  /* ================ ПЛЕЙЛИСТ ================ */
   #playlist-layer {
     position: absolute;
     inset: 0;
@@ -291,6 +297,7 @@
     transition: width 0.3s linear;
   }
 
+  /* ================= КОЛЕСО — без подсветки ================= */
   .controls {
     margin-top: 20px;
     display: flex;
@@ -302,11 +309,11 @@
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #2a2a30, #0d0d12);
+    background: radial-gradient(circle at 30% 30%, #34343c, #14141a);
     box-shadow:
-      inset 0 2px 4px rgba(255,255,255,0.08),
+      inset 0 2px 4px rgba(255,255,255,0.10),
       inset 0 -4px 10px rgba(0,0,0,0.8),
-      0 0 0 1px rgba(255,255,255,0.05);
+      0 0 0 1px rgba(255,255,255,0.08);
     position: relative;
     transition: box-shadow 2.5s ease;
     pointer-events: auto;
@@ -318,11 +325,12 @@
     transform: translate(-50%,-50%);
     width: 54px; height: 54px;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #15151a, #08080c);
+    background: radial-gradient(circle at 30% 30%, #1a1a20, #0c0c10);
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.9);
     pointer-events: none;
   }
 
+  /* ================= КОНТЕНТ ================= */
   #content {
     position: relative;
     z-index: 4;
@@ -336,6 +344,7 @@
     position: relative;
   }
 
+  /* ================= КНОПКА TELEGRAM ================= */
   .tg-btn {
     position: fixed;
     bottom: 8vh;
@@ -482,25 +491,24 @@
 
         <canvas id="visualizer"></canvas>
 
-        <!-- Проверенные рабочие треки Pixabay (без параметров filename) -->
         <ul class="tracklist" id="tracklist">
-          <li class="track active" data-src="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3">
+          <li class="track active" data-src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">01</span><span class="name">Neon Drive</span><span class="dur">2:12</span>
           </li>
-          <li class="track" data-src="https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3">
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=lofi-hip-hop-11489.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">02</span><span class="name">Midnight Tape</span><span class="dur">2:30</span>
           </li>
-          <li class="track" data-src="https://cdn.pixabay.com/audio/2021/11/25/audio_91b32e02f9.mp3">
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_34c6b3d7b6.mp3?filename=lofi-chill-medium-version-159456.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">03</span><span class="name">Chrome Sunset</span><span class="dur">1:45</span>
           </li>
-          <li class="track" data-src="https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a73467.mp3">
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=lofi-study-112191.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">04</span><span class="name">Vapor Trail</span><span class="dur">3:05</span>
           </li>
-          <li class="track" data-src="https://cdn.pixabay.com/audio/2022/10/30/audio_34c6b3d7b6.mp3">
+          <li class="track" data-src="https://cdn.pixabay.com/download/audio/2021/11/25/audio_91b32e02f9.mp3?filename=chill-lofi-song-8444.mp3">
             <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
             <span class="num">05</span><span class="name">Afterglow</span><span class="dur">2:48</span>
           </li>
@@ -562,7 +570,6 @@
   let mouseX = 0, mouseY = 0;
   let smoothMouseX = 0, smoothMouseY = 0;
 
-  // ============ БЕЗОПАСНОЕ СНЯТИЕ switching ============
   function clearSwitching() {
     screen.classList.remove('switching');
     if (switchingTimeout) {
@@ -571,7 +578,6 @@
     }
   }
 
-  // ============ ПЕРЕКЛЮЧЕНИЕ ТРЕКА ============
   function playTrack(index) {
     if (index < 0 || index >= tracks.length) return;
     currentTrackIndex = index;
@@ -582,16 +588,13 @@
     const src = tracks[index].dataset.src;
     console.log('[Player] Playing:', src);
 
-    // Включаем затемнение
     screen.classList.add('switching');
     clearTimeout(switchingTimeout);
-    // Страховка: если через 3 сек класс всё ещё стоит — снимаем принудительно
     switchingTimeout = setTimeout(() => {
       console.warn('[Player] Force clear switching');
       clearSwitching();
     }, 3000);
 
-    // Меняем источник
     audio.src = src;
     audio.volume = 0.6;
 
@@ -600,7 +603,6 @@
       p.then(() => {
         musicStarted = true;
         console.log('[Player] Started:', src);
-        // Снимаем затемнение через короткую паузу — визуально плавно
         setTimeout(() => clearSwitching(), 300);
       }).catch(err => {
         console.warn('[Player] Play failed:', err.name);
@@ -610,41 +612,32 @@
     }
   }
 
-  // ============ АУДИО СОБЫТИЯ ============
   audio.addEventListener('playing', () => {
     musicStarted = true;
     clearSwitching();
   });
+
+  // При ошибке НЕ переключаем автоматически — оставляем пользователю выбор
   audio.addEventListener('error', (e) => {
     console.warn('[Player] Audio error:', audio.src);
     musicStarted = false;
     clearSwitching();
-    // Автопропуск: если трек битый — играем следующий
-    if (tracks.length > 1) {
-      const next = (currentTrackIndex + 1) % tracks.length;
-      if (next !== currentTrackIndex) {
-        setTimeout(() => playTrack(next), 400);
-      }
-    }
   });
 
-  // ============ КЛИК ПО ТРЕКУ ============
   tracks.forEach((track, i) => {
     track.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      if (i === currentTrackIndex && !audio.paused) return; // уже играет
+      if (i === currentTrackIndex && !audio.paused) return;
       playTrack(i);
     });
   });
 
-  // ============ АВТОПЕРЕХОД ============
   audio.addEventListener('ended', () => {
     const next = (currentTrackIndex + 1) % tracks.length;
     playTrack(next);
   });
 
-  // ============ КОЛЕСО = PLAY/PAUSE ============
   wheel.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!audio.src) {
@@ -658,7 +651,6 @@
     }
   });
 
-  // ============ СВАЙП ПО КОЛЕСУ ============
   let wheelTouchStartY = null;
   wheel.addEventListener('touchstart', (e) => {
     wheelTouchStartY = e.touches[0].clientY;
@@ -728,7 +720,6 @@
   setTimeout(resizeCanvas, 200);
   setTimeout(resizeCanvas, 800);
 
-  // ============ ЧАСЫ ============
   const clockEl = document.getElementById('clock');
   function updateClock() {
     const d = new Date();
@@ -737,13 +728,11 @@
   updateClock();
   setInterval(updateClock, 30000);
 
-  // ============ ПРОГРЕСС ============
   setInterval(() => {
     if (!audio.duration || isNaN(audio.duration)) return;
     progressBar.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
   }, 250);
 
-  // ============ СКРОЛЛ ============
   function updateTargetProgress() {
     const docHeight = document.body.scrollHeight - window.innerHeight;
     targetProgress = docHeight > 0 ? Math.min(1, Math.max(0, window.scrollY / docHeight)) : 0;
@@ -757,7 +746,6 @@
     mouseY = (e.clientY / window.innerHeight - 0.5) * -8;
   });
 
-  // ============ ГЛАВНЫЙ ЦИКЛ ============
   let screenOn = false;
   let bootVisible = false;
   let btnVisible = false;
@@ -771,7 +759,6 @@
 
     const p = currentProgress;
 
-    // ФАЗА 1
     const liftProgress = Math.min(1, p / 0.25);
     const easeLift = 1 - Math.pow(1 - liftProgress, 3);
 
@@ -788,14 +775,12 @@
 
     const glowAmount = Math.max(0, (p - 0.30) / 0.40);
     player.style.boxShadow = `
-      inset 0 1px 1px rgba(255,255,255,${0.08 + 0.04 * glowAmount}),
+      inset 0 1px 1px rgba(255,255,255,${0.12 + 0.04 * glowAmount}),
       inset 0 -2px 6px rgba(0,0,0,0.6),
-      0 40px 80px rgba(0,0,0,${0.6 + 0.2 * glowAmount}),
-      0 0 ${60 * glowAmount}px rgba(122,162,255,${0.25 * glowAmount}),
-      0 0 0 1px rgba(122,162,255,${0.2 * glowAmount})
+      0 40px 80px rgba(0,0,0,${0.7 + 0.1 * glowAmount}),
+      0 0 0 1px rgba(255,255,255,${0.08 + 0.04 * glowAmount})
     `;
 
-    // ФАЗА 2
     const screenOnProgress = Math.max(0, Math.min(1, (p - 0.25) / 0.15));
     if (screenOnProgress > 0.5 && !screenOn) {
       screen.classList.add('on');
@@ -823,7 +808,6 @@
       }
     }
 
-    // ФАЗА 3
     const playlistOpacity = Math.max(0, Math.min(1, (p - 0.58) / 0.10));
     if (playlistOpacity > 0.01) {
       playlistLayer.style.opacity = playlistOpacity;
@@ -840,7 +824,6 @@
       }
     }
 
-    // ФАЗА 4
     const atmosphere = Math.max(0, Math.min(1, (p - 0.50) / 0.30));
     roomLight.style.opacity = atmosphere;
 
@@ -850,15 +833,6 @@
       body.style.background = '#000000';
     }
 
-    const wheelGlow = Math.max(0, Math.min(1, (p - 0.55) / 0.25));
-    wheel.style.boxShadow = `
-      inset 0 2px 4px rgba(122,162,255,${0.3 * wheelGlow}),
-      inset 0 -4px 10px rgba(0,0,0,0.8),
-      0 0 0 1px rgba(122,162,255,${0.3 * wheelGlow}),
-      0 0 ${40 * wheelGlow}px rgba(122,162,255,${0.3 * wheelGlow})
-    `;
-
-    // ФАЗА 5
     const btnProgress = Math.max(0, Math.min(1, (p - 0.75) / 0.10));
     if (btnProgress > 0.1 && !btnVisible) {
       tgBtn.classList.add('show');
